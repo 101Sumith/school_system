@@ -1,0 +1,185 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="theme-color" content="#f5f7fb">
+    <meta name="description" content="A clear, simple dashboard for managing students and courses.">
+    <title>Students — Campus</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/frontend/styles.css">
+  </head>
+  <body>
+    <div class="app-shell">
+      <aside class="sidebar" id="sidebar">
+        <a class="brand" href="/" aria-label="Campus home">
+          <span class="brand-mark">C</span>
+          <span class="brand-name">campus<span class="brand-dot">.</span></span>
+        </a>
+        <div class="workspace-label">WORKSPACE</div>
+        <nav class="navigation" aria-label="Main navigation">
+          <button class="nav-link active" data-view="dashboard"><span class="nav-icon">⌂</span>Overview</button>
+          <button class="nav-link" data-view="students"><span class="nav-icon">♙</span>Students<span class="nav-count" id="student-nav-count">0</span></button>
+          <button class="nav-link" data-view="courses"><span class="nav-icon">▤</span>Courses</button>
+          <button class="nav-link" data-view="departments"><span class="nav-icon">▦</span>Departments</button>
+          <button class="nav-link" data-view="faculty"><span class="nav-icon">♧</span>Faculty</button>
+          <button class="nav-link" data-view="subjects"><span class="nav-icon">◫</span>Subjects</button>
+          <button class="nav-link" data-view="attendance"><span class="nav-icon">✓</span>Attendance</button>
+          <button class="nav-link" data-view="marks"><span class="nav-icon">⌑</span>Marks & results</button>
+          <button class="nav-link" data-view="exams"><span class="nav-icon">▣</span>Examinations</button>
+          <button class="nav-link" data-view="timetable"><span class="nav-icon">◷</span>Timetable</button>
+          <button class="nav-link" data-view="reports"><span class="nav-icon">▥</span>Reports</button>
+        </nav>
+        <div class="sidebar-bottom">
+          <div class="sidebar-note">
+            <span class="note-icon">✦</span>
+            <div><strong>All in one place</strong><p>Your campus, organized.</p></div>
+          </div>
+          <div class="user-card">
+            <div class="avatar avatar-user">AD</div>
+            <div><strong>Administrator</strong><span>Campus manager</span></div>
+            <button class="user-menu sign-out-button" data-action="logout" aria-label="Sign out">↪</button>
+          </div>
+        </div>
+      </aside>
+
+      <main class="main-content">
+        <header class="topbar">
+          <button class="menu-button" id="menu-button" aria-label="Open navigation">☰</button>
+          <div class="breadcrumbs">Workspace <span>/</span> <strong id="breadcrumb-current">Overview</strong></div>
+          <div class="topbar-right">
+            <span class="today-label" id="today-label"></span>
+            <div class="avatar avatar-user top-avatar">AD</div>
+          </div>
+        </header>
+
+        <div class="page-content">
+          <section class="view-panel active" id="dashboard-view">
+            <div class="page-heading heading-row">
+              <div><div class="eyebrow">YOUR CAMPUS AT A GLANCE</div><h1>Good morning<span class="heading-period">.</span></h1><p>Here’s what’s happening with your students today.</p></div>
+              <button class="button button-primary" data-action="add-student"><span>＋</span> Add student</button>
+            </div>
+            <div class="stat-grid">
+              <article class="stat-card"><div class="stat-top"><span>Total students</span><span class="stat-icon blue">♙</span></div><div class="stat-number" id="stat-students">—</div><div class="stat-foot"><span class="stat-dot blue-dot"></span>Enrolled in your campus</div></article>
+              <article class="stat-card"><div class="stat-top"><span>Active students</span><span class="stat-icon green">↗</span></div><div class="stat-number" id="stat-active">—</div><div class="stat-foot"><span class="stat-dot green-dot"></span>Currently active</div></article>
+              <article class="stat-card"><div class="stat-top"><span>Faculty</span><span class="stat-icon violet">♧</span></div><div class="stat-number" id="stat-faculty">—</div><div class="stat-foot"><span class="stat-dot violet-dot"></span>Teaching staff</div></article>
+              <article class="stat-card"><div class="stat-top"><span>Courses</span><span class="stat-icon orange">▤</span></div><div class="stat-number" id="stat-courses">—</div><div class="stat-foot"><span class="stat-dot orange-dot"></span>Across your departments</div></article>
+              <article class="stat-card"><div class="stat-top"><span>Attendance</span><span class="stat-icon green">✓</span></div><div class="stat-number" id="stat-attendance">—</div><div class="stat-foot"><span class="stat-dot green-dot"></span>Present or late</div></article>
+              <article class="stat-card"><div class="stat-top"><span>Average marks</span><span class="stat-icon violet">⌑</span></div><div class="stat-number" id="stat-average-marks">—</div><div class="stat-foot"><span class="stat-dot violet-dot"></span>Across recorded assessments</div></article>
+              <article class="stat-card"><div class="stat-top"><span>Departments</span><span class="stat-icon blue">▦</span></div><div class="stat-number" id="stat-departments">—</div><div class="stat-foot"><span class="stat-dot blue-dot"></span>Academic departments</div></article>
+            </div>
+            <div class="content-grid">
+              <section class="panel recent-panel">
+                <div class="panel-heading"><div><h2>Recent registrations</h2><p>Your latest student sign-ups</p></div><button class="text-button" data-view="students">View all <span>→</span></button></div>
+                <div class="table-wrap">
+                  <table><thead><tr><th>STUDENT</th><th>COURSE</th><th>ADMITTED</th><th>STATUS</th></tr></thead><tbody id="recent-students"></tbody></table>
+                </div>
+                <div class="empty-state hidden" id="recent-empty"><span class="empty-illustration">♙</span><strong>No students yet</strong><p>Add your first student to get started.</p><button class="button button-light" data-action="add-student">Add a student</button></div>
+              </section>
+              <aside class="panel quick-panel">
+                <div class="panel-heading"><div><h2>Quick actions</h2><p>Keep things moving</p></div></div>
+                <button class="quick-action" data-action="add-student"><span class="quick-icon quick-blue">＋</span><span><strong>Register a student</strong><small>Add someone new to campus</small></span><span class="quick-arrow">→</span></button>
+                <button class="quick-action" data-view="courses"><span class="quick-icon quick-violet">▤</span><span><strong>Manage courses</strong><small>Organize your curriculum</small></span><span class="quick-arrow">→</span></button>
+                <button class="quick-action" data-view="departments"><span class="quick-icon quick-orange">▦</span><span><strong>Manage departments</strong><small>Keep teams up to date</small></span><span class="quick-arrow">→</span></button>
+                <div class="quick-tip"><span>✦</span><p><strong>Stay organized</strong><br>Keep student records up to date for a clearer campus overview.</p></div>
+              </aside>
+            </div>
+          </section>
+
+          <section class="view-panel" id="students-view">
+            <div class="page-heading heading-row">
+              <div><div class="eyebrow">YOUR CAMPUS DIRECTORY</div><h1>Students<span class="heading-period">.</span></h1><p>Manage student records, courses and admissions.</p></div>
+              <button class="button button-primary" data-action="add-student"><span>＋</span> Add student</button>
+            </div>
+            <section class="panel directory-panel">
+              <div class="directory-toolbar">
+                <div class="panel-heading"><div><h2>All students <span class="subtle-count" id="student-count">0</span></h2><p>A complete list of your enrolled students</p></div></div>
+                <div class="filter-row">
+                  <label class="search-box"><span>⌕</span><input id="student-search" type="search" placeholder="Search students..." aria-label="Search students"></label>
+                  <select id="student-department-filter" aria-label="Filter by department"><option value="">All departments</option></select>
+                </div>
+              </div>
+              <div class="table-wrap">
+                <table><thead><tr><th>STUDENT</th><th>PHONE</th><th>DEPARTMENT</th><th>COURSE</th><th>ADMITTED</th><th>STATUS</th><th></th></tr></thead><tbody id="students-table"></tbody></table>
+              </div>
+              <div class="empty-state hidden" id="students-empty"><span class="empty-illustration">⌕</span><strong>No students found</strong><p>Try a different search or register a student.</p></div>
+            </section>
+          </section>
+
+          <section class="view-panel" id="courses-view">
+            <div class="page-heading heading-row">
+              <div><div class="eyebrow">ACADEMIC PROGRAMS</div><h1>Courses<span class="heading-period">.</span></h1><p>Build and organize the programs you offer.</p></div>
+              <button class="button button-primary" data-action="add-course"><span>＋</span> Add course</button>
+            </div>
+            <div class="panel collection-panel">
+              <div class="panel-heading"><div><h2>All courses <span class="subtle-count" id="course-count">0</span></h2><p>Your available courses by department</p></div></div>
+              <div class="collection-grid" id="courses-grid"></div>
+              <div class="empty-state hidden" id="courses-empty"><span class="empty-illustration">▤</span><strong>No courses yet</strong><p>Add a department first, then create your first course.</p><button class="button button-light" data-action="add-course">Add a course</button></div>
+            </div>
+          </section>
+
+          <section class="view-panel" id="departments-view">
+            <div class="page-heading heading-row">
+              <div><div class="eyebrow">YOUR ACADEMIC TEAMS</div><h1>Departments<span class="heading-period">.</span></h1><p>Keep your academic departments organized.</p></div>
+              <button class="button button-primary" data-action="add-department"><span>＋</span> Add department</button>
+            </div>
+            <div class="panel collection-panel">
+              <div class="panel-heading"><div><h2>All departments <span class="subtle-count" id="department-count">0</span></h2><p>The teams that make up your campus</p></div></div>
+              <div class="collection-grid" id="departments-grid"></div>
+              <div class="empty-state hidden" id="departments-empty"><span class="empty-illustration">▦</span><strong>No departments yet</strong><p>Create your first department to start organizing courses.</p><button class="button button-light" data-action="add-department">Add a department</button></div>
+            </div>
+          </section>
+          <section class="view-panel" id="records-view">
+            <div class="page-heading heading-row">
+              <div><div class="eyebrow" id="records-eyebrow">ACADEMIC RECORDS</div><h1 id="records-title">Faculty<span class="heading-period">.</span></h1><p id="records-description">Manage academic records.</p></div>
+              <button class="button button-primary hidden" id="records-add-button" data-action="add-record"><span>＋</span> Add record</button>
+            </div>
+            <section class="panel directory-panel">
+              <div class="directory-toolbar">
+                <div class="panel-heading"><div><h2 id="records-list-title">All records <span class="subtle-count" id="records-count">0</span></h2><p id="records-list-description">Browse and manage records</p></div></div>
+                <div class="filter-row">
+                  <label class="search-box"><span>⌕</span><input id="records-search" type="search" placeholder="Search records..." aria-label="Search records"></label>
+                  <input class="date-filter" id="records-date-filter" type="date" aria-label="Filter by date">
+                </div>
+              </div>
+              <div class="table-wrap">
+                <table><thead id="records-head"></thead><tbody id="records-body"></tbody></table>
+              </div>
+              <div class="empty-state hidden" id="records-empty"><span class="empty-illustration">⌕</span><strong>No records found</strong><p>Add a record or change your filters.</p></div>
+            </section>
+          </section>
+          <section class="view-panel" id="reports-view">
+            <div class="page-heading">
+              <div><div class="eyebrow">ACADEMIC INSIGHTS</div><h1>Reports<span class="heading-period">.</span></h1><p>Export attendance and academic performance records.</p></div>
+            </div>
+            <div class="report-grid">
+              <article class="panel report-card"><span class="collection-icon">✓</span><h2>Attendance report</h2><p>Daily attendance records by student, subject and date.</p><div class="report-actions"><button class="button button-light" data-action="export-report" data-report="attendance" data-format="csv">Export CSV</button><button class="button button-primary" data-action="export-report" data-report="attendance" data-format="pdf">Export PDF</button></div></article>
+              <article class="panel report-card"><span class="collection-icon">⌑</span><h2>Academic performance</h2><p>Marks, grades and grade points for recorded assessments.</p><div class="report-actions"><button class="button button-light" data-action="export-report" data-report="performance" data-format="csv">Export CSV</button><button class="button button-primary" data-action="export-report" data-report="performance" data-format="pdf">Export PDF</button></div></article>
+            </div>
+          </section>
+        </div>
+      </main>
+    </div>
+
+    <div class="modal-backdrop hidden" id="modal-backdrop">
+      <section class="modal" role="dialog" aria-modal="true" aria-labelledby="modal-title">
+        <div class="modal-heading"><div><div class="eyebrow" id="modal-eyebrow">CAMPUS DIRECTORY</div><h2 id="modal-title">Add a student</h2></div><button class="icon-button" id="modal-close" aria-label="Close dialog">×</button></div>
+        <div id="modal-content"></div>
+      </section>
+    </div>
+    <div class="toast-region" id="toast-region" aria-live="polite"></div>
+    <div class="auth-screen hidden" id="auth-screen">
+      <form class="auth-card" id="login-form">
+        <a class="brand auth-brand" href="/" aria-label="Campus home"><span class="brand-mark">C</span><span class="brand-name">campus<span class="brand-dot">.</span></span></a>
+        <div class="eyebrow">COLLEGE ERP</div><h1>Welcome back<span class="heading-period">.</span></h1><p>Sign in to your campus workspace.</p>
+        <div class="form-field"><label for="login-email">Email address</label><input id="login-email" name="email" type="email" autocomplete="username" required></div>
+        <div class="form-field"><label for="login-password">Password</label><input id="login-password" name="password" type="password" autocomplete="current-password" required></div>
+        <div class="form-error hidden" id="login-error" role="alert"></div>
+        <button class="button button-primary auth-submit" type="submit">Sign in</button>
+      </form>
+    </div>
+    <script src="/frontend/app.js" defer></script>
+  </body>
+</html>

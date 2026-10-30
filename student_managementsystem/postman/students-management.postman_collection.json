@@ -1,0 +1,154 @@
+{
+  "info": {
+    "_postman_id": "d326238a-7720-4b13-bd71-4040da976d83",
+    "name": "Campus College ERP API",
+    "description": "Authenticated REST API for the Campus College ERP. Bootstrap the first administrator, sign in, then create reference records before attendance and results.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    { "key": "baseUrl", "value": "http://127.0.0.1:5000" },
+    { "key": "bootstrapToken", "value": "" },
+    { "key": "token", "value": "" },
+    { "key": "departmentId", "value": "1" },
+    { "key": "courseId", "value": "1" },
+    { "key": "studentId", "value": "1" },
+    { "key": "facultyId", "value": "1" },
+    { "key": "subjectId", "value": "1" },
+    { "key": "facultyId", "value": "1" },
+    { "key": "subjectId", "value": "1" },
+    { "key": "markId", "value": "1" },
+    { "key": "examId", "value": "1" },
+    { "key": "timetableId", "value": "1" }
+  ],
+  "auth": {
+    "type": "bearer",
+    "bearer": [{ "key": "token", "value": "{{token}}", "type": "string" }]
+  },
+  "item": [
+    {
+      "name": "Authentication",
+      "item": [
+        {
+          "name": "Bootstrap first administrator (one time)",
+          "request": {
+            "auth": { "type": "noauth" },
+            "method": "POST",
+            "header": [{ "key": "X-Bootstrap-Token", "value": "{{bootstrapToken}}" }, { "key": "Content-Type", "value": "application/json" }],
+            "body": { "mode": "raw", "raw": "{\n  \"email\": \"admin@your-college.edu\",\n  \"password\": \"Replace-With-A-Unique-12-Character-Password\"\n}" },
+            "url": "{{baseUrl}}/api/auth/bootstrap"
+          }
+        },
+        {
+          "name": "Admin login (stores token)",
+          "request": {
+            "auth": { "type": "noauth" },
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": { "mode": "raw", "raw": "{\n  \"email\": \"admin@your-college.edu\",\n  \"password\": \"Replace-With-A-Unique-12-Character-Password\"\n}" },
+            "url": "{{baseUrl}}/api/auth/login"
+          },
+          "event": [{ "listen": "test", "script": { "exec": ["if (pm.response.code === 200) pm.collectionVariables.set('token', pm.response.json().data.token);"], "type": "text/javascript" } }]
+        },
+        { "name": "Current account", "request": { "method": "GET", "url": "{{baseUrl}}/api/auth/me" } },
+        { "name": "List users (admin)", "request": { "method": "GET", "url": "{{baseUrl}}/api/auth/users" } },
+        { "name": "Create student login (admin)", "request": { "method": "POST", "header": [{ "key": "Content-Type", "value": "application/json" }], "body": { "mode": "raw", "raw": "{\n  \"email\": \"{{studentEmail}}\",\n  \"password\": \"Replace-With-A-Unique-12-Character-Password\",\n  \"role\": \"student\",\n  \"student_id\": {{studentId}}\n}" }, "url": "{{baseUrl}}/api/auth/users" } }
+      ]
+    },
+    {
+      "name": "Health & dashboard",
+      "item": [
+        { "name": "Health", "request": { "method": "GET", "url": "{{baseUrl}}/api/health" } },
+        { "name": "Dashboard", "request": { "method": "GET", "url": "{{baseUrl}}/api/dashboard" } }
+      ]
+    },
+    {
+      "name": "Departments",
+      "item": [
+        { "name": "List departments", "request": { "method": "GET", "url": "{{baseUrl}}/api/departments" } },
+        {
+          "name": "Create department",
+          "event": [{ "listen": "test", "script": { "exec": ["if (pm.response.code === 201) pm.collectionVariables.set('departmentId', pm.response.json().data.id);"], "type": "text/javascript" } }],
+          "request": { "method": "POST", "header": [{ "key": "Content-Type", "value": "application/json" }], "body": { "mode": "raw", "raw": "{\n  \"name\": \"School of Computing\",\n  \"code\": \"COMP\",\n  \"description\": \"Computing and technology programs\"\n}" }, "url": "{{baseUrl}}/api/departments" }
+        },
+        { "name": "Update department", "request": { "method": "PUT", "header": [{ "key": "Content-Type", "value": "application/json" }], "body": { "mode": "raw", "raw": "{\n  \"name\": \"School of Computing\",\n  \"code\": \"COMP\",\n  \"description\": \"Updated department description\"\n}" }, "url": "{{baseUrl}}/api/departments/{{departmentId}}" } },
+        { "name": "Delete department", "request": { "method": "DELETE", "url": "{{baseUrl}}/api/departments/{{departmentId}}" } }
+      ]
+    },
+    {
+      "name": "Courses",
+      "item": [
+        { "name": "List courses", "request": { "method": "GET", "url": "{{baseUrl}}/api/courses" } },
+        {
+          "name": "Create course",
+          "event": [{ "listen": "test", "script": { "exec": ["if (pm.response.code === 201) pm.collectionVariables.set('courseId', pm.response.json().data.id);"], "type": "text/javascript" } }],
+          "request": { "method": "POST", "header": [{ "key": "Content-Type", "value": "application/json" }], "body": { "mode": "raw", "raw": "{\n  \"name\": \"Software Engineering\",\n  \"code\": \"SE-101\",\n  \"department_id\": {{departmentId}},\n  \"duration\": \"4 years\",\n  \"description\": \"Foundations of software engineering\"\n}" }, "url": "{{baseUrl}}/api/courses" }
+        },
+        { "name": "Update course", "request": { "method": "PUT", "header": [{ "key": "Content-Type", "value": "application/json" }], "body": { "mode": "raw", "raw": "{\n  \"name\": \"Software Engineering\",\n  \"code\": \"SE-101\",\n  \"department_id\": {{departmentId}},\n  \"duration\": \"4 years\",\n  \"description\": \"Updated course description\"\n}" }, "url": "{{baseUrl}}/api/courses/{{courseId}}" } },
+        { "name": "Delete course", "request": { "method": "DELETE", "url": "{{baseUrl}}/api/courses/{{courseId}}" } }
+      ]
+    },
+    {
+      "name": "Students",
+      "item": [
+        { "name": "List students", "request": { "method": "GET", "url": "{{baseUrl}}/api/students" } },
+        { "name": "Search students", "request": { "method": "GET", "url": "{{baseUrl}}/api/students?search=Alex" } },
+        {
+          "name": "Create student",
+          "event": [{ "listen": "test", "script": { "exec": ["if (pm.response.code === 201) { pm.collectionVariables.set('studentId', pm.response.json().data.id); pm.collectionVariables.set('studentEmail', pm.response.json().data.email); }"], "type": "text/javascript" } }],
+          "request": { "method": "POST", "header": [{ "key": "Content-Type", "value": "application/json" }], "body": { "mode": "raw", "raw": "{\n  \"name\": \"Alex Morgan\",\n  \"email\": \"alex@example.edu\",\n  \"phone\": \"+1 555 010 2040\",\n  \"department_id\": {{departmentId}},\n  \"course_id\": {{courseId}},\n  \"admission_date\": \"2026-09-01\"\n}" }, "url": "{{baseUrl}}/api/students" }
+        },
+        { "name": "Get student profile", "request": { "method": "GET", "url": "{{baseUrl}}/api/students/{{studentId}}" } },
+        { "name": "Update student", "request": { "method": "PUT", "header": [{ "key": "Content-Type", "value": "application/json" }], "body": { "mode": "raw", "raw": "{\n  \"name\": \"Alex Morgan\",\n  \"email\": \"alex@example.edu\",\n  \"phone\": \"+1 555 010 2040\",\n  \"department_id\": {{departmentId}},\n  \"course_id\": {{courseId}},\n  \"admission_date\": \"2026-09-01\"\n}" }, "url": "{{baseUrl}}/api/students/{{studentId}}" } },
+        { "name": "Delete student", "request": { "method": "DELETE", "url": "{{baseUrl}}/api/students/{{studentId}}" } }
+      ]
+    },
+    {
+      "name": "Faculty",
+      "item": [
+        { "name": "List faculty", "request": { "method": "GET", "url": "{{baseUrl}}/api/faculty" } },
+        { "name": "Create faculty", "event": [{ "listen": "test", "script": { "exec": ["if (pm.response.code === 201) pm.collectionVariables.set('facultyId', pm.response.json().data.id);"], "type": "text/javascript" } }], "request": { "method": "POST", "header": [{ "key": "Content-Type", "value": "application/json" }], "body": { "mode": "raw", "raw": "{\n  \"name\": \"Jordan Taylor\",\n  \"email\": \"faculty.{{$timestamp}}@example.edu\",\n  \"department_id\": {{departmentId}},\n  \"title\": \"Lecturer\"\n}" }, "url": "{{baseUrl}}/api/faculty" } }
+      ]
+    },
+    {
+      "name": "Subjects",
+      "item": [
+        { "name": "List subjects", "request": { "method": "GET", "url": "{{baseUrl}}/api/subjects" } },
+        { "name": "Create subject", "event": [{ "listen": "test", "script": { "exec": ["if (pm.response.code === 201) pm.collectionVariables.set('subjectId', pm.response.json().data.id);"], "type": "text/javascript" } }], "request": { "method": "POST", "header": [{ "key": "Content-Type", "value": "application/json" }], "body": { "mode": "raw", "raw": "{\n  \"name\": \"Introduction to Programming\",\n  \"code\": \"CS-101\",\n  \"course_id\": {{courseId}},\n  \"credits\": 3,\n  \"semester\": 1,\n  \"faculty_ids\": [{{facultyId}}]\n}" }, "url": "{{baseUrl}}/api/subjects" } }
+      ]
+    },
+    {
+      "name": "Attendance",
+      "item": [
+        { "name": "List attendance", "request": { "method": "GET", "url": "{{baseUrl}}/api/attendance?date=2026-10-30" } },
+        { "name": "Attendance summary", "request": { "method": "GET", "url": "{{baseUrl}}/api/attendance/summary?student_id={{studentId}}&subject_id={{subjectId}}" } },
+        { "name": "Record attendance session", "request": { "method": "POST", "header": [{ "key": "Content-Type", "value": "application/json" }], "body": { "mode": "raw", "raw": "{\n  \"records\": [{ \"student_id\": {{studentId}}, \"subject_id\": {{subjectId}}, \"attendance_date\": \"2026-10-30\", \"status\": \"Present\" }]\n}" }, "url": "{{baseUrl}}/api/attendance/bulk" } }
+      ]
+    },
+    {
+      "name": "Marks & results",
+      "item": [
+        { "name": "List marks", "request": { "method": "GET", "url": "{{baseUrl}}/api/marks" } },
+        { "name": "Record internal marks", "request": { "method": "POST", "header": [{ "key": "Content-Type", "value": "application/json" }], "body": { "mode": "raw", "raw": "{\n  \"student_id\": {{studentId}},\n  \"subject_id\": {{subjectId}},\n  \"semester\": 1,\n  \"assessment_type\": \"Internal\",\n  \"marks_obtained\": 84,\n  \"max_marks\": 100\n}" }, "url": "{{baseUrl}}/api/marks" } },
+        { "name": "Student marksheet", "request": { "method": "GET", "url": "{{baseUrl}}/api/students/{{studentId}}/marksheet" } }
+      ]
+    },
+    {
+      "name": "Exams & timetable",
+      "item": [
+        { "name": "List exams", "request": { "method": "GET", "url": "{{baseUrl}}/api/exams" } },
+        { "name": "Schedule exam", "request": { "method": "POST", "header": [{ "key": "Content-Type", "value": "application/json" }], "body": { "mode": "raw", "raw": "{\n  \"title\": \"Semester 1 Examination\",\n  \"subject_id\": {{subjectId}},\n  \"exam_date\": \"2026-11-15\",\n  \"start_time\": \"09:00\",\n  \"end_time\": \"12:00\",\n  \"room\": \"A-101\",\n  \"exam_type\": \"Semester\"\n}" }, "url": "{{baseUrl}}/api/exams" } },
+        { "name": "Weekly timetable", "request": { "method": "GET", "url": "{{baseUrl}}/api/timetable" } },
+        { "name": "Add class session", "request": { "method": "POST", "header": [{ "key": "Content-Type", "value": "application/json" }], "body": { "mode": "raw", "raw": "{\n  \"subject_id\": {{subjectId}},\n  \"faculty_id\": {{facultyId}},\n  \"day_of_week\": 0,\n  \"start_time\": \"10:00\",\n  \"end_time\": \"11:00\",\n  \"room\": \"A-101\"\n}" }, "url": "{{baseUrl}}/api/timetable" } }
+      ]
+    },
+    {
+      "name": "Reports",
+      "item": [
+        { "name": "Attendance CSV", "request": { "method": "GET", "url": "{{baseUrl}}/api/reports/attendance.csv" } },
+        { "name": "Attendance PDF", "request": { "method": "GET", "url": "{{baseUrl}}/api/reports/attendance.pdf" } },
+        { "name": "Performance CSV", "request": { "method": "GET", "url": "{{baseUrl}}/api/reports/performance.csv" } },
+        { "name": "Performance PDF", "request": { "method": "GET", "url": "{{baseUrl}}/api/reports/performance.pdf" } }
+      ]
+    }
+  ]
+}
